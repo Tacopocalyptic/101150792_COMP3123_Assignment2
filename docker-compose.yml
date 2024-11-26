@@ -1,0 +1,74 @@
+#---------------------------------------
+# 1. docker-compose -p comp3123-assign2 -f docker-compose.yml up -d
+#   -- This command will start containers in detached mode without rebuilding the images (if they already exist)
+#
+# 2. docker-compose -p comp3123-assign2 -f docker-compose.yml up -d --build
+#   -- This command forces the image to rebuild before starting the container. Run after changes.
+#---------------------------------------
+
+version: '3.9'
+
+services:
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - '3000:3000'
+    depends_on:
+      - backend
+    environment:
+      - REACT_APP_BACKEND_URL=http://backend:5000
+    networks:
+      - my-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - '5000:5000'
+    depends_on:
+      - mongodb
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017/mydatabase
+    networks:
+      - my-network
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb-comp3123   # must be unique
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=pass
+      - MONGO_INITDB_DATABASE=mydatabase
+    volumes:    # persistent storage
+      - ./data:/data/db
+    #restart: unless-stopped    # keep trying to start until it works
+    #command: mongod -auth      # enforces authorization
+    networks:
+      - my-network
+
+  mongo-express:
+    image: mongo-express:latest
+    ports:
+      - "8083:8081"
+    environment:
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=admin
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=pass
+      - ME_CONFIG_MONGODB_SERVER=mongodb
+    container_name: mongo-express-comp3123
+    depends_on:
+      - mongodb
+    networks:
+      - my-network
+
+volumes:
+  data:
+
+networks:
+  my-network:
+    driver: bridge

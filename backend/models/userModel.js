@@ -14,11 +14,9 @@ const userSchema = new mongoose.Schema({
             if(value.length<5) {
                 throw new Error("Email must be at least 5 characters!");
             }
-            // TODO - maybe regex check for @ and .
         }
     },
     password: {
-        // TODO - hashing??
         type: String,
         required: true
     },
@@ -32,9 +30,12 @@ const userSchema = new mongoose.Schema({
         default: () => Date.now()
     }
 })
+
+// Run before each save to DB
 userSchema.pre('save', function(next) {
     this.updated_at = Date.now()
     next()
 })
+
 const User = mongoose.model('User', userSchema)
 module.exports = User

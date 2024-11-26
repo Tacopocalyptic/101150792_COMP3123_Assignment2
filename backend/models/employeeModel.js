@@ -30,6 +30,8 @@ const employeeSchema = new mongoose.Schema({
         default: () => Date.now()
     }
 })
+
+// Run before each save to DB
 employeeSchema.pre('save', function(next) {
     this.updated_at = Date.now()
     next()
