@@ -26,4 +26,3 @@ app.use('/api/v1/emp/employees', empRoute)
 app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`)
 })
-
