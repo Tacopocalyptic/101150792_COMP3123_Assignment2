@@ -20,7 +20,7 @@ services:
     depends_on:
       - backend
     environment:
-      - REACT_APP_BACKEND_URL=http://backend:5000
+      - BACKEND_URL=http://backend:5000
     networks:
       - my-network
 
@@ -34,7 +34,8 @@ services:
     depends_on:
       - mongodb
     environment:
-      - MONGO_URI=mongodb://mongodb:27017/mydatabase
+      - DB_URL=mongodb://mongodb:27017/mydatabase
+      TOKEN: /run/secrets/token
     networks:
       - my-network
 
@@ -44,8 +45,6 @@ services:
     ports:
       - "27017:27017"
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=admin
-      - MONGO_INITDB_ROOT_PASSWORD=pass
       - MONGO_INITDB_DATABASE=mydatabase
     volumes:    # persistent storage
       - ./data:/data/db
@@ -59,14 +58,16 @@ services:
     ports:
       - "8083:8081"
     environment:
-      - ME_CONFIG_MONGODB_ADMINUSERNAME=admin
-      - ME_CONFIG_MONGODB_ADMINPASSWORD=pass
       - ME_CONFIG_MONGODB_SERVER=mongodb
     container_name: mongo-express-comp3123
     depends_on:
       - mongodb
     networks:
       - my-network
+
+secrets:
+  token:
+    file: ./token.txt
 
 volumes:
   data:

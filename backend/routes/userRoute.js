@@ -3,6 +3,9 @@ const router = express.Router()
 const userModel = require('../models/userModel')
 const { body, matchedData, validationResult } = require('express-validator')
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
+const TOKEN = process.env.TOKEN || "Secret"
+
 
 // User Management
 
@@ -33,7 +36,6 @@ router.post('/signup', [
 router.post('/login', [
         body('username').trim().optional(),
         body('password').notEmpty().isString(),
-        body('email', 'Must be valid email format').trim().optional().isEmail()
     ], async (req, res) => {
     // Validate request
     const errors = validationResult(req)
@@ -41,19 +43,25 @@ router.post('/login', [
 
     let data = matchedData(req)
     try {
-        const user = await userModel.findOne({ $or: [{username: data.username}, {email: data.email}]})
-        console.log(data.password, user.password, user)
+        const user = await userModel.findOne({ $or: [{username: data.username}, {email: data.username}]})
+        // console.log(data.password, user.password, user)
         if (!user){
             res.status(400).json({status: false, message: 'Invalid username or email.'})
         } else if (!await bcrypt.compare(data.password, user.password)){             
             res.status(401).json({status: false, message: 'Invalid password.'}) 
         } else {
-            res.status(200).json({status: true, message: "Login successful"}) // TODO - jwt token return
+            const token = generateAccessToken({ username: req.body.username })
+            res.status(200).json({status: true, jwt: token, user: user.username, email: user.email})
         }
     } catch (err) {
         res.status(500).json({status: false, error: err.message})
     }
 })
 
+
+// JWT function
+function generateAccessToken(username) {
+    return jwt.sign(username, TOKEN, { expiresIn: '1800s' })
+}
 
 module.exports = router

@@ -4,7 +4,8 @@ const userSchema = new mongoose.Schema({
     username: {
         type: String,
         required: true,
-        default: () => this.username || this.email.split('@')[0]
+        default: () => this.username || this.email.split('@')[0],
+        unique: true
     },
     email: {
         type: String,
@@ -14,7 +15,8 @@ const userSchema = new mongoose.Schema({
             if(value.length<5) {
                 throw new Error("Email must be at least 5 characters!");
             }
-        }
+        },
+        unique: true
     },
     password: {
         type: String,

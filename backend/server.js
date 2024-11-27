@@ -3,18 +3,16 @@ const app = express()
 const mongoose = require('mongoose')
 const userRoute = require('./routes/userRoute')
 const empRoute = require('./routes/employeeRoute')
-const PORT = process.env.port || 5000
+
+const PORT = process.env.PORT || 5000
+const DB_URL = process.env.DB_URL || "mongodb://localhost:27017/mydatabase"
 
 app.use(express.json())
 
-const DB_URL = "mongodb+srv://tacopocalyptical:fpV0Xj9aTIzJ5V1L@mycluster.fvweq.mongodb.net/Assign01_db?retryWrites=true&w=majority&appName=MyCluster"
 mongoose.Promise = global.Promise
 
-mongoose.connect(DB_URL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true // outdated warning??
-}).then(() => {
-    console.log("Successfully connected to the database mongoDB Atlas Server");
+mongoose.connect(DB_URL).then(() => {
+    console.log("Successfully connected to the database");
 }).catch(err => {
     console.log('Could not connect to the database. Exiting now...', err);
     process.exit();

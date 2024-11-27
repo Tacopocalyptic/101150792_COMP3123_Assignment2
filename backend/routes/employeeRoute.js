@@ -2,6 +2,8 @@ const express = require('express')
 const router = express.Router()
 const empModel = require('../models/employeeModel')
 const { body, query, param, matchedData, validationResult } = require('express-validator')
+const jwt = require('jsonwebtoken')
+const TOKEN = process.env.TOKEN || "Secret"
 
 
 // Employee Management
@@ -104,5 +106,24 @@ router
             res.status(500).send({status: false, message: err.message})
         }
     })
+
+
+// JWT authenticate function
+function authenticateToken(req, res, next) {
+    const authHeader = req.headers['authorization']
+    const token = authHeader && authHeader.split(' ')[1]
+    
+    if (token == null) return res.sendStatus(401)
+    
+    jwt.verify(token, TOKEN, (err, user) => {
+        console.log(err)
+    
+        if (err) return res.sendStatus(403)
+    
+        req.user = user
+    
+        next()
+    })
+}
 
 module.exports = router
