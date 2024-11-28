@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Link } from 'react-router'
 
 export default function NavBar() {
     const { loggedIn, setLoggedIn } = useState(false)
@@ -30,10 +31,10 @@ export default function NavBar() {
     <>
     <ul className="navbar-nav">
     <li className="nav-item">
-    <a className="nav-link" href="#">Log In</a>
+    <Link className="nav-link" to="login">Login</Link>
     </li>
     <li className="nav-item">
-    <a className="nav-link" href="#">Register</a>
+    <Link className="nav-link" to="signup">Sign Up</Link>
     </li>
     </ul>
     </>
