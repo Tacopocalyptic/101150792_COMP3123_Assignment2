@@ -1,43 +1,45 @@
-import React from 'react';
+import React, { useState } from 'react'
 
 export default function NavBar() {
-
-
+    const { loggedIn, setLoggedIn } = useState(false)
     
     return  (
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="#">Navbar</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
+    <nav className="navbar navbar-expand-sm bg-dark navbar-dark">
+    <a className='navbar-brand' href='#'>Employee Management System</a>
+    <div className="container-fluid">
 
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-        <li class="nav-item active">
-            <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+    {loggedIn ? 
+    <>
+    <ul className="navbar-nav">
+        <li className="nav-item">
+        <a className="nav-link" href="#">Employee List</a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link" href="#">Link</a>
+        <li className="nav-item">
+        <a className="nav-link" href="#">Add Employee</a>
         </li>
-        <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Dropdown
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <a class="dropdown-item" href="#">Action</a>
-            <a class="dropdown-item" href="#">Another action</a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="#">Something else here</a>
-            </div>
+        <li className="nav-item">
+        <a className="nav-link" href="#">Log Out</a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link disabled" href="#">Disabled</a>
-        </li>
-        </ul>
-        <form class="form-inline my-2 my-lg-0">
-        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" />
-        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-        </form>
+    </ul>
+    <form className="d-flex">
+        <input className="form-control me-2" type="text" placeholder="Search Employees..." />
+        <button className="btn btn-primary" type="button">Search</button>
+    </form>
+    </>
+    :
+    <>
+    <ul className="navbar-nav">
+    <li className="nav-item">
+    <a className="nav-link" href="#">Log In</a>
+    </li>
+    <li className="nav-item">
+    <a className="nav-link" href="#">Register</a>
+    </li>
+    </ul>
+    </>
+
+    }
+
     </div>
     </nav>
     )

@@ -7,7 +7,8 @@ export const TextInput = (props) => {
     return (
         <>
             <label for={name}>{label}</label>
-            <input type={type} id={id} name={name} value={value} onChange={handleChange}></input>
+            <input type={type} id={id} name={name} value={value} 
+            onChange={handleChange} className="form-control"></input>
         </>
     )
 } 
