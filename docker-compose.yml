@@ -1,3 +1,4 @@
+---
 #---------------------------------------
 # 1. docker-compose -p comp3123-assign2 -f docker-compose.yml up -d
 #   -- This command will start containers in detached mode without rebuilding the images (if they already exist)
@@ -6,21 +7,20 @@
 #   -- This command forces the image to rebuild before starting the container. Run after changes.
 #---------------------------------------
 
-version: '3.9'
+version: "3.9"
 
 services:
-
   frontend:
     container_name: frontend
     build:
       context: ./frontend
       dockerfile: ./DockerFile
     ports:
-      - '3000:3000'
+      - "3000:3000"
     depends_on:
       - backend
     environment:
-      - BACKEND_URL=http://backend:5000
+      - REACT_APP_BACKEND_URL=http://backend:5000
     networks:
       - my-network
 
@@ -30,7 +30,7 @@ services:
       context: ./backend
       dockerfile: ./DockerFile
     ports:
-      - '5000:5000'
+      - "5000:5000"
     depends_on:
       - mongodb
     environment:
@@ -41,12 +41,12 @@ services:
 
   mongodb:
     image: mongo:latest
-    container_name: mongodb-comp3123   # must be unique
+    container_name: mongodb-comp3123 # must be unique
     ports:
       - "27017:27017"
     environment:
       - MONGO_INITDB_DATABASE=mydatabase
-    volumes:    # persistent storage
+    volumes: # persistent storage
       - ./data:/data/db
     #restart: unless-stopped    # keep trying to start until it works
     #command: mongod -auth      # enforces authorization

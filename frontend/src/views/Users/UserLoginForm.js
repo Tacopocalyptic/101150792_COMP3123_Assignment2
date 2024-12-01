@@ -1,75 +1,60 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import { TextInput } from "../../components/TextInput";
-import axios from "axios";
-const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:5000";
+import { useLoginContext } from "../../providers/loginProvider";
 
-class UserLoginForm extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      username: "",
-      password: "",
-    };
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleChange = this.handleChange.bind(this);
-  }
+export default function UserLoginForm() {
+  const [username, setUsername] = useState();
+  const [password, setPassword] = useState();
 
-  handleChange(event) {
-    this.setState({
-      ...this.state,
-      [event.target.name]: event.target.value,
-    });
-  }
+  const { login, errMessage, error, checkAuth } = useLoginContext();
 
-  handleSubmit(event) {
-    // TODO - verification before submitting? idk
-    axios
-      .post(`${BACKEND_URL}/api/v1/user/login`, this.state)
-      .then((res) => {
-        // TODO - return token to browser and redirect if success?
-        console.log(res.data);
-        localStorage.setItem("jwt", res.data.jwt);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  }
+  // unsure why this does not call here when manually
+  // typing the url that would render this page  ??
+  // checkAuth(false, "/employees");
 
-  render() {
-    return (
-      <div>
-        <h1>Login</h1>
-        <form>
-          <div className="form-group">
-            <TextInput
-              label="User Name or Email"
-              type="text"
-              name="username"
-              id="username"
-              value={this.state.username}
-              handleChange={this.handleChange}
-            />
-          </div>
-          <div className="form-group">
-            <TextInput
-              label="Password"
-              type="password"
-              name="password"
-              id="password"
-              value={this.state.password}
-              handleChange={this.handleChange}
-            />
-          </div>
-          <input
-            className="btn btn-submit"
-            type="button"
-            value="Log In"
-            onClick={this.handleSubmit}
+  useEffect(() => {
+    checkAuth(false, "/employees");
+  }, []);
+
+  // TODO - figure out submit on enter press
+  return (
+    <div>
+      <h1>Login</h1>
+      <form>
+        {error ? <p className="alert alert-danger">{errMessage}</p> : <></>}
+        <div className="form-group">
+          <TextInput
+            label="User Name or Email"
+            type="text"
+            name="username"
+            id="username"
+            value={username}
+            handleChange={(e) => {
+              setUsername(e.target.value);
+            }}
           />
-        </form>
-      </div>
-    );
-  }
+        </div>
+        <div className="form-group">
+          <TextInput
+            label="Password"
+            type="password"
+            name="password"
+            id="password"
+            value={password}
+            handleChange={(e) => {
+              setPassword(e.target.value);
+            }}
+          />
+        </div>
+        <input
+          className="btn btn-primary"
+          type="button"
+          value="Log In"
+          onClick={() => {
+            login({ username: username, password: password });
+          }}
+        />
+      </form>
+    </div>
+  );
 }
-
-export default UserLoginForm;

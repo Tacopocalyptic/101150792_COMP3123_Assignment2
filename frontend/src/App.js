@@ -1,9 +1,13 @@
-import { useEffect } from "react";
 import "./App.css";
+import { useState, useEffect, useContext } from "react";
 import NavBar from "./components/NavBar";
-import EmployeeEntryFrom from "./views/Employee/EmpEntryForm";
-import EmployeeList from "./views/Employee/EmpList";
 import UserLoginForm from "./views/Users/UserLoginForm";
+import UserSignUpForm from "./views/Users/UserSignUpForm";
+import EmployeeEntryForm from "./views/Employee/EmpEntryForm";
+import EmployeeList from "./views/Employee/EmpList";
+import EmployeeEditForm from "./views/Employee/EmpEditForm";
+import EmployeeDetails from "./views/Employee/EmpDetails";
+import LoginProvider, { LoginContext } from "./providers/loginProvider";
 
 import {
   /* Components of React Router */
@@ -13,22 +17,25 @@ import {
 } from "react-router-dom";
 
 function App() {
-  const token = localStorage.getItem("jwt");
-  const navigate = useNavigate();
+  // const { loggedIn, setLoggedIn } = useContext(LoginContext);
 
-  useEffect(() => {
-    if (!token) {
-      navigate("login");
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (localStorage.getItem("jwt")) {
+  //     setLoggedIn(true);
+  //   }
+  // }, [loggedIn]);
 
   return (
     <>
       <NavBar />
       <Routes>
-        <Route index element={<EmployeeList />} />
+        {/* <Route index element={<UserLoginForm />} /> */}
         <Route path="login" element={<UserLoginForm />} />
-        <Route path="signup" element={<UserLoginForm />} />
+        <Route path="signup" element={<UserSignUpForm />} />
+        <Route path="employees" element={<EmployeeList />} />
+        <Route path="employees/new" element={<EmployeeEntryForm />} />
+        <Route path="employees/edit/:id" element={<EmployeeEditForm />} />
+        <Route path="employees/:id" element={<EmployeeDetails />} />
       </Routes>
     </>
   );

@@ -1,64 +1,169 @@
-import React, { Component } from 'react'
-import { TextInput } from '../../components/TextInput';
+import { useState, useEffect } from "react";
+import { TextInput } from "../../components/TextInput";
+import { useNavigate, useParams } from "react-router";
+import axios from "axios";
+const BACKEND_URL =
+  process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
 
-class EmpEditForm extends Component {
-    constructor(props){
-        super(props)
-        this.state = {
-            first_name: "",
-            last_name: "",
-            email: "",
-            salary: 0,
-            date_of_joining: new Date(),
-            position: "",
-            department: ""
-        }
-        this.handleSubmit = this.handleSubmit.bind(this);
-        this.handleChange = this.handleChange.bind(this);
-    }
+export default function EmpEditForm() {
+  const { id } = useParams();
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [position, setPosition] = useState("");
+  const [salary, setSalary] = useState(0);
+  const [dateJoined, setDateJoined] = useState("");
+  const [department, setDepartment] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const [errMessage, setErrMessage] = useState(false);
 
-    handleChange(event){
-        this.setState({
-            ...this.state,
-            [event.target.name]: event.target.value
-        })
-    }
+  const navigate = useNavigate();
 
-    handleSubmit(event){
-        // Axios call to API here, pass state in
-    }
+  const getEmp = async () => {
+    axios
+      .get(`${BACKEND_URL}/api/v1/emp/employees/${id}`)
+      .then((res) => {
+        console.log(res.data);
+        const emp = res.data.employee;
+        setFirstName(emp.first_name);
+        setLastName(emp.last_name);
+        setEmail(emp.email);
+        setPosition(emp.position || "");
+        setSalary(emp.salary);
+        setDateJoined(emp.date_of_joining || "");
+        setDepartment(emp.department || "");
+        setIsLoading(false);
+      })
+      .catch((e) => {
+        console.log(e);
+        setError(true);
+        setErrMessage(e.response.data.message);
+      });
+  };
 
-    render() {
-        return <>
-        <h1 className=''>Edit Employee Info</h1>
-        <form className=''> 
-            <div>
-                <TextInput label="First Name" type="text" name="first_name" id="first_name" 
-                value={this.state.first_name} handleChange={this.handleChange}/>
-                <TextInput label="Last Name" type="text" name="last_name" id="last_name" 
-                value={this.state.last_name} handleChange={this.handleChange}/>
-            </div>
-            <div>
-                <TextInput label="Email" type="email" name="email" id="email" 
-                value={this.state.email} handleChange={this.handleChange}/>
-            </div>
-            <div>
-                <TextInput label="Salary" type="number" name="salary" id="salary" 
-                value={this.state.salary} handleChange={this.handleChange}/>
-            </div>
-            <div>
-                <TextInput label="Date of Joining" type="date" name="city" id="city" 
-                value={this.state.date_of_joining} handleChange={this.handleChange}/>
-                <TextInput label="Position" type="text" name="position" id="position" 
-                value={this.state.position} handleChange={this.handleChange}/>
-                <TextInput label="Department" type="text" name="department" id="department" 
-                value={this.state.department} handleChange={this.handleChange}/>
-            </div>
-            <input className='btn btn-submit' type="button" value="Submit" onClick={this.handleSubmit}/>
-        </form>
-        </>
-    }
+  // TODO
+  const handleSubmit = () => {
+    axios
+      .put(`${BACKEND_URL}/api/v1/emp/employees/${id}`, {
+        // TODO - pass changed values, check somehow idk
+      })
+      .then((res) => {
+        // return user to employee details page
+        navigate(`/employees/${id}`);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
 
+  useEffect(() => {
+    getEmp();
+  }, []);
+
+  return isLoading ? (
+    <div className="alert alert-secondary">Loading...</div>
+  ) : (
+    <div className="card">
+      <h1 className="">Edit Employee Info</h1>
+      <form className="">
+        {error && (
+          <p className="alert alert-danger">
+            {Array.isArray(errMessage)
+              ? errMessage.map((msg) => (
+                  <>
+                    {msg.msg}
+                    <br />
+                  </>
+                ))
+              : errMessage}
+          </p>
+        )}
+        <div>
+          <TextInput
+            label="First Name"
+            type="text"
+            name="first_name"
+            id="first_name"
+            value={firstName}
+            handleChange={(e) => {
+              setFirstName(e.target.value);
+            }}
+          />
+          <TextInput
+            label="Last Name"
+            type="text"
+            name="last_name"
+            id="last_name"
+            value={lastName}
+            handleChange={(e) => {
+              setLastName(e.target.value);
+            }}
+          />
+        </div>
+        <div>
+          <TextInput
+            label="Email"
+            type="email"
+            name="email"
+            id="email"
+            value={email}
+            handleChange={(e) => {
+              setEmail(e.target.value);
+            }}
+          />
+        </div>
+        <div>
+          <TextInput
+            label="Salary"
+            type="number"
+            name="salary"
+            id="salary"
+            value={salary}
+            handleChange={(e) => {
+              setSalary(e.target.value);
+            }}
+          />
+        </div>
+        <div>
+          <TextInput
+            label="Date of Joining"
+            type="date"
+            name="city"
+            id="city"
+            value={dateJoined}
+            handleChange={(e) => {
+              setDateJoined(e.target.value);
+            }}
+          />
+          <TextInput
+            label="Position"
+            type="text"
+            name="position"
+            id="position"
+            value={position}
+            handleChange={(e) => {
+              setPosition(e.target.value);
+            }}
+          />
+          <TextInput
+            label="Department"
+            type="text"
+            name="department"
+            id="department"
+            value={department}
+            handleChange={(e) => {
+              setDepartment(e.target.value);
+            }}
+          />
+        </div>
+        <input
+          className="btn btn-primary"
+          type="button"
+          value="Submit"
+          onClick={handleSubmit}
+        />
+      </form>
+    </div>
+  );
 }
-
-export default EmpEditForm;
