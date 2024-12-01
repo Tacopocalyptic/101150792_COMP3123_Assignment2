@@ -17,7 +17,7 @@ export default function UserSignUpForm() {
   checkAuth(false, "/employees");
 
   const handleSubmit = () => {
-    if (!password || password != confirmPassword) {
+    if (!password || password !== confirmPassword) {
       setError(true);
       setErrMessage("Passwords must match");
       return;
