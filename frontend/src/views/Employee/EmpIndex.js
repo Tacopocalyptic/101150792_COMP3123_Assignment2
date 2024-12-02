@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useLoginContext } from "../../providers/loginProvider";
 import EmployeeList from "./EmpList";
-const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:5000";
+const BACKEND_URL =
+  process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
 
 export default function EmployeesView() {
   const [emps, setEmps] = useState([]);
