@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link, useNavigate, useParams } from "react-router";
+import { useLoginContext } from "../../providers/loginProvider";
 const BACKEND_URL =
   process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
 
@@ -10,10 +11,12 @@ export default function EmployeeDetails() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
   const [errMessage, setErrMessage] = useState();
+  const { checkAuth } = useLoginContext();
 
   const navigate = useNavigate();
 
   useEffect(() => {
+    checkAuth(true, "/login");
     getEmp();
   }, [id]);
 
@@ -52,7 +55,18 @@ export default function EmployeeDetails() {
   ) : (
     <div className="card">
       <h1>Employee Details</h1>
-      {error ? <p className="alert alert-danger">{errMessage}</p> : <></>}
+      {error && (
+        <p className="alert alert-danger">
+          {Array.isArray(errMessage)
+            ? errMessage.map((msg) => (
+                <>
+                  {msg.msg}
+                  <br />
+                </>
+              ))
+            : errMessage}
+        </p>
+      )}
       <dl>
         <dt>Name</dt>
         <dd>

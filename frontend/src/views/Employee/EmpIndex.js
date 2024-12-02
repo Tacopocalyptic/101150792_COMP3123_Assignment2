@@ -13,8 +13,7 @@ export default function EmployeesView() {
   const [errMessage, setErrMessage] = useState();
   const { checkAuth } = useLoginContext();
 
-  console.log("Viewing emp list....");
-  // runs when this page loads, if not logged in, redirects
+  // console.log("Viewing emp list....");
   checkAuth(true, "/login");
 
   const getEmps = async () => {

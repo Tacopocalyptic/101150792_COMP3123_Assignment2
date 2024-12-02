@@ -55,6 +55,8 @@ export default function LoginProvider(props) {
   };
 
   const checkAuth = (expectLoggedIn, navPath) => {
+    // TODO - use this to verify that the JWT is also valid with the backend
+
     console.log(`Logged in state: ${loggedIn.toString()}`);
     if (loggedIn !== expectLoggedIn) {
       navigate(navPath);

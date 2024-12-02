@@ -2,6 +2,7 @@ import { useState } from "react";
 import { TextInput } from "../../components/TextInput";
 import { useNavigate } from "react-router";
 import axios from "axios";
+import { useLoginContext } from "../../providers/loginProvider";
 const BACKEND_URL =
   process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
 
@@ -15,11 +16,15 @@ export default function EmployeeEntryFrom() {
   const [department, setDepartment] = useState("");
   const [error, setError] = useState(false);
   const [errMessage, setErrMessage] = useState(false);
+  const { checkAuth } = useLoginContext();
 
   const navigate = useNavigate();
 
+  checkAuth(true, "/login");
+
   // TODO
   const handleSubmit = () => {
+    checkAuth(true, "/login");
     axios
       .post(`${BACKEND_URL}/api/v1/emp/employees/`, {
         first_name: firstName,

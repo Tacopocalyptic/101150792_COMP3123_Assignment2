@@ -1,4 +1,3 @@
-import React, { useEffect, useContext } from "react";
 import { Link } from "react-router";
 import { useLoginContext } from "../providers/loginProvider";
 
