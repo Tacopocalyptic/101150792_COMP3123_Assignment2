@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Link } from "react-router";
 import { useLoginContext } from "../../providers/loginProvider";
 import EmployeeList from "./EmpList";
 const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:5000";
@@ -19,8 +18,11 @@ export default function EmployeesView() {
   checkAuth(true, "/login");
 
   const getEmps = async () => {
+    const searchUrl = searchValue
+      ? `${BACKEND_URL}/api/v1/emp/employees?searchBy=${searchBy}&searchValue=${searchValue}`
+      : `${BACKEND_URL}/api/v1/emp/employees`;
     axios
-      .get(`${BACKEND_URL}/api/v1/emp/employees`)
+      .get(searchUrl)
       .then((res) => {
         console.log(res.data);
         const empData = res.data.employees;
@@ -34,16 +36,14 @@ export default function EmployeesView() {
   };
 
   useEffect(() => {
+    checkAuth(true, "/login");
     getEmps();
   }, []);
 
   return (
     <>
       <h3>Employee List</h3>
-      <form className="d-flex">
-        <label for="searchBy" className="form-control me-2">
-          Search by:
-        </label>
+      <div className="d-flex">
         <select
           className="form-control me-2"
           value={searchBy}
@@ -51,6 +51,7 @@ export default function EmployeesView() {
           name="searchBy"
           id="searchBy"
         >
+          <option value="">Search By...</option>
           <option value="department">Department</option>
           <option value="position">Position</option>
         </select>
@@ -61,13 +62,15 @@ export default function EmployeesView() {
           value={searchValue}
           onChange={(e) => setSearchValue(e.target.value)}
         />
-        <Link
+        <button
           className="btn btn-primary"
-          to={`/employees/search?searchBy=${searchBy}&searchValue=${searchValue}`}
+          onClick={() => {
+            getEmps();
+          }}
         >
           Search
-        </Link>
-      </form>
+        </button>
+      </div>
       <EmployeeList emps={emps} error={error} errMessage={errMessage} />
     </>
   );

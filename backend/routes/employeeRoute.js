@@ -17,14 +17,31 @@ router
   .route("")
 
   // get all employees
-  .get(async (req, res) => {
-    try {
-      const emps = await empModel.find();
-      res.status(200).json({ status: true, employees: emps });
-    } catch (err) {
-      res.status(500).send({ status: false, message: err.message });
+  .get(
+    [
+      query("searchBy").trim().optional(),
+      query("searchValue").trim().optional(),
+    ],
+    async (req, res) => {
+      try {
+        // console.log("Search Hit");
+        const { searchBy, searchValue } = matchedData(req, {
+          includeOptionals: true,
+        });
+        let emps;
+
+        if (searchBy && searchValue) {
+          emps = await empModel.find().where(searchBy).equals(searchValue);
+        } else {
+          emps = await empModel.find();
+        }
+
+        res.status(200).json({ status: true, employees: emps });
+      } catch (err) {
+        res.status(500).send({ status: false, message: err.message });
+      }
     }
-  })
+  )
 
   // create new employee
   .post(
@@ -89,34 +106,7 @@ router
     } catch (err) {
       res.status(500).send({ status: false, message: err.message });
     }
-  })
-
-  // search by params
-  .get(
-    [query("searchBy").notEmpty(), query("searchValue").notEmpty],
-    async (req, res) => {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.status(400).json({ status: false, message: errors.array() });
-      }
-
-      try {
-        const searchParams = matchedData();
-        const emps = await empModel
-          .find()
-          .where(searchParams.searchBy)
-          .equals(searchParams.searchValue);
-        if (!emps) {
-          return res
-            .status(400)
-            .json({ status: false, message: `No employees found` });
-        }
-        res.status(200).json({ status: true, employees: emps });
-      } catch (err) {
-        res.status(500).send({ status: false, message: err.message });
-      }
-    }
-  );
+  });
 
 router
   .route("/:eid")

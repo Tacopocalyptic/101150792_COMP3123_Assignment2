@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { TextInput } from "../../components/TextInput";
 import { useNavigate, useParams } from "react-router";
+import { useLoginContext } from "../../providers/loginProvider";
 import axios from "axios";
 const BACKEND_URL =
   process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
@@ -17,8 +18,11 @@ export default function EmpEditForm() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
   const [errMessage, setErrMessage] = useState(false);
+  const { checkAuth } = useLoginContext();
 
   const navigate = useNavigate();
+
+  checkAuth(true, "/login");
 
   const getEmp = async () => {
     axios
@@ -46,9 +50,14 @@ export default function EmpEditForm() {
   const handleSubmit = () => {
     axios
       .put(`${BACKEND_URL}/api/v1/emp/employees/${id}`, {
-        // TODO - pass changed values, check somehow idk
+        first_name: firstName,
+        last_name: lastName,
+        email: email,
+        position: position,
+        date_of_joining: dateJoined,
+        department: department,
       })
-      .then((res) => {
+      .then(() => {
         // return user to employee details page
         navigate(`/employees/${id}`);
       })
@@ -58,6 +67,7 @@ export default function EmpEditForm() {
   };
 
   useEffect(() => {
+    checkAuth(true, "/login");
     getEmp();
   }, []);
 
